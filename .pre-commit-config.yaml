@@ -1,0 +1,53 @@
+# Automatically run checks before committing or pushing changes.
+# More info: https://pre-commit.com
+# More hooks: https://pre-commit.com/hooks.html
+#
+# Install for all the hook-type/stages in use:
+# *   pip install -r requirements.txt # in your virtualenv
+# *   pre-commit install --hook-type pre-commit --hook-type pre-push
+#
+# When adding a new hook, run it with --all-files.
+# *   commit stage hooks must run very quickly (<1s) and never modify files. They
+#     can block commit for critical or hard-to-undo errors.
+# *   push stage hooks should run quickly (<10s) and may do standard changes
+#     that should always be performed before code review.
+#
+# Common commands/options:
+#   pre-commit run [--hook-stage push] [hook-id] [--all-files]
+# Run all the pre commit hooks:
+#   pre-commit run --hook-stage commit
+# Run one hook (which only runs pre-push):
+#   pre-commit run --hook-stage push black
+# Run one pre-commit hook on all files:
+#   pre-commit run detect-secrets --all-files
+
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+    -   id: check-added-large-files
+        stages: [commit]
+    -   id: no-commit-to-branch
+        args: ['--branch', 'main']
+        stages: [commit]
+    -   id: check-merge-conflict # Don't commit merge-conflict markers.
+        stages: [commit]
+    -   id: check-yaml
+        stages: [push]
+    -   id: check-ast # Verify files parse as Python.
+        stages: [push]
+    -   id: check-json
+        stages: [push]
+-   repo: https://github.com/psf/black
+    rev: 22.3.0 # Replace by any tag/version: https://github.com/psf/black/tags
+    hooks:
+    -   id: black
+        language_version: python3 # Should be a command that runs python3.6+
+        stages: [push]
+        # Enable --preview to get wrapping/splitting of long strings.
+        args: ['--preview']
+-   repo: https://github.com/Yelp/detect-secrets
+    rev: v1.1.0
+    hooks:
+    -   id: detect-secrets # Don't commit high-entropy strings that look like passwords.
+        stages: [commit]

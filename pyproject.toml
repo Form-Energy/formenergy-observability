@@ -1,0 +1,46 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "formenergy-observability"
+authors = [{name = "Form Energy Software", email = "software@formenergy.com"}]
+readme = "README.md"
+# Get version from the module __version__ attribute, and description from the
+# module docstring.
+dynamic = ["version", "description"]
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    # Accept any version that's not a major version upgrade, but is at least
+    # a known good recent version. This is slightly different from for example
+    # ~=1.1.6 which would mean >=1.1.6,<1.2 and is too strict.
+    "dagster>=1.1.6,<2",
+    "opentelemetry-api>=1.15.0,<2",
+    "opentelemetry-sdk>=1.15.0,<2",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.15.0,<2",
+    "opentelemetry-instrumentation-requests>=0.36b0,<1",
+    "opentelemetry-instrumentation-sqlalchemy>=0.36b0,<1",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest~=6.1.2",
+    "pytest-html~=2.1.1",
+    "pre-commit==2.15.0",
+]
+
+[project.urls]
+Home = "https://github.com/Form-Energy/formenergy-observability"
+
+[tool.flit.module]
+name = "form_observability"
+
+[tool.pytest.ini_options]
+markers = [
+    "no_mock_get_current_span: Skip autousing the mock_get_current_span fixture in pytest unit tests",
+]

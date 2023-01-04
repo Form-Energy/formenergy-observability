@@ -1,0 +1,17 @@
+# Environment variables
+**/.env
+.direnv
+.envrc
+
+# JetBrains IDE
+.idea/
+
+# Auto-generated and temporary editor files.
+.DS_Store
+Thumbs.db
+*.swp
+
+**/__pycache__/
+
+# Package files
+**/dist/
