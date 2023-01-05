@@ -16,6 +16,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    # Help pip get the right version of grpsio and packaging to satisfy both
+    # Dagster and OTel. This specifies the versions to match Dagster 1.1.7, which
+    # also satisfy OTel. (If pip picks OTel's version first, it's outside
+    # Dagster's bounds.)
+    "grpcio>=1.32.0,<1.48.1",
+    "packaging>=20.9,<22",
     # Accept any version that's not a major version upgrade, but is at least
     # a known good recent version. This is slightly different from for example
     # ~=1.1.6 which would mean >=1.1.6,<1.2 and is too strict.
