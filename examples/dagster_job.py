@@ -55,7 +55,7 @@ def root_trace_context_op(context):
 
 
 @_trace.traced
-def _do_work(test_id: str):
+def _do_work(my_data: str) -> None:
     """This throws an exception which should be caught by the on_exception_return."""
     raise RuntimeError("Catch me, one test had an error but the pipeline is OK.")
 
@@ -67,14 +67,14 @@ def _do_work(test_id: str):
     # monitoring in place to investigate specific errors.
     on_exception_return=Output(5, "result"),
 )
-def test_op(context, test_id):
+def test_op(context, my_data: str) -> None:
     """Other ops in the graph use @otel_op to pick up that trace context.
 
     This op looks for a trace context and will error if it can't find it. It should
     find the trace context published by the above op.
     """
-    with ctx.set({"test_id": test_id}, update_current_span=True):
-        _do_work(test_id)
+    with ctx.set({"my_data": my_data}, update_current_span=True):
+        _do_work(my_data)
 
 
 @job(

@@ -21,9 +21,11 @@ from form_observability import ContextAwareTracer, ctx
 
 _trace = ContextAwareTracer(__name__)
 
-with ctx.set({"test_id": my_test_id}):
-    # many intervening function calls and spans
-    _trace.add_event("my_event")  # automatically has the test_id attribute set on it
+with ctx.set({"my_attribute_name": my_attribute_value}):
+    # There could be many intervening function calls and spans.
+    # Spans and events in this context automatically have the my_attribute_name
+    # attribute set on them.
+    _trace.add_event("my_event")
 ```
 
 Trace context propagation for Dagster ops:

@@ -19,13 +19,13 @@ _trace = ContextAwareTracer(__name__)
 _log = logging.getLogger(__name__)
 
 
-def _helper_that_sometimes_catches_exceptions_internally(test_id: str) -> None:
+def _helper_that_sometimes_catches_exceptions_internally(my_data: str) -> None:
     sleep_s = random.random()
     err_f = random.random()
     # Set some attributes that will be added to any spans and events in this context.
     with ctx.set(
         {
-            "test_size": len(test_id),
+            "data_size": len(my_data),
             "sleep_s": sleep_s,
             "err_f": err_f,
         },
@@ -36,13 +36,13 @@ def _helper_that_sometimes_catches_exceptions_internally(test_id: str) -> None:
             time.sleep(sleep_s)
             if err_f < 0.1:
                 raise RuntimeError("Demo error to show exception treatment.")
-            # This success event will have the test_size attribute set on it from
-            # the context above, as well as the test_id attribute set in main().
+            # This success event will have the data_size attribute set on it from
+            # the context above, as well as the my_data attribute set in main().
             _trace.add_event("success")
             return True
         except:
             _trace.add_event("failure")
-            _log.exception(f"Error during processing of {test_id=}.")
+            _log.exception(f"Error during processing of {my_data=}.")
             return False
 
 
@@ -50,9 +50,9 @@ def _helper_that_sometimes_catches_exceptions_internally(test_id: str) -> None:
 def main():
     _log.info("Preparing to process tests.")
     num_errors = 0
-    for test_id in ("one", "two", "three", "four", "five", "six"):
-        with _trace.start_as_current_span("work", attributes={"test_id": test_id}):
-            if _helper_that_sometimes_catches_exceptions_internally(test_id):
+    for my_data in ("one", "two", "three", "four", "five", "six"):
+        with _trace.start_as_current_span("work", attributes={"my_data": my_data}):
+            if _helper_that_sometimes_catches_exceptions_internally(my_data):
                 num_errors += 1
     opentelemetry.trace.get_current_span().set_attributes({"num_errors": num_errors})
     _log.info("Demo processing complete.")

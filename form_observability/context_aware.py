@@ -1,30 +1,29 @@
-"""OpenTelemetry tracing setup.
-
-This module handles spans and events, but should not be aware of any implementation
-under other pipeline modules (including as orchestration/ where Dagster/OTel
-integration lives).
+"""OpenTelemetry tracing with context-scoped attributes.
 
 Usage:
 
 _tracer = ContextAwareTracer(__name__)
+
 with _tracer.start_as_current_span(
     "some work",
     attributes={
-        # Attributes added to EventAttrKey/Value...
-        EventAttrKey.TEST_ID: "TST22",
-        # ...or just use one-off keys.
+        # You can use attribute names that are added to EventAttrKey/Value, which
+        # may be useful so you can reference them in monitoring, or...
+        EventAttrKey.DURATION_SECONDS: 12.5,
+        # ...just use one-off keys.
         "foo": 42,
     },
 ):
-    # This event will have the test_id attribute, same as the parent span.
-    _tracer.add_event(EventAttrValue.TEST_SKIPPED)
+    # This event will have the duration_seconds and foo attributes, same as the
+    # parent span.
+    _tracer.add_event(EventAttrValue.MY_CUSTOM_EVENT_NAME)
 
     # If you get more details after opening the span...
-    metadata = db.get...
-
-    # This adds cell_id as an attribute to the parent span since update_current_span=True.
-    with log_ctx.set({EventAttrKey.CELL_ID: metadata["cell_id"]}, update_current_span=True):
-        # Any further spans/events/logs in helper() will have test_id and cell_id.
+    var_value = db.get...
+    # This adds bar as an attribute to the parent span since update_current_span=True.
+    with log_ctx.set({"bar": bar_value, update_current_span=True):
+        # Any further spans/events/logs in helper() will have all the attributes:
+        # EventAttrKey.DURATION_SECONDS, foo, and bar.
         helper()
 """
 from contextlib import contextmanager
@@ -116,11 +115,11 @@ class _ObservabilityContext:
 #: Object to use throughout the application to attach context to logs and traces.
 #:
 #: Usage:
-#:      with ctx.set({EventAttrKey.TEST_ID: "TST22"}):
-#:          # test_id is added to the generated LogRecord.
-#:          _log.info(f"Doing some work.")
-#:          # test_id can also be read back explicitly.
-#:          print("Working on test_id", ctx.get("test_id"))
+#:      with ctx.set({"attr_name": attr_value}):
+#:          # attr_name is added to the generated LogRecord.
+#:          _log.info("Doing some work.")
+#:          # attr_value can also be read back explicitly.
+#:          print(f"Doing some work with attr_name={ctx.get('attr_value')}.")
 ctx = _ObservabilityContext()
 
 

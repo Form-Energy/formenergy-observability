@@ -22,7 +22,7 @@ _trace = ContextAwareTracer(__name__)
 _log = logging.getLogger(__name__)
 
 
-def _thread_worker(test_id: str, otel_ctx) -> None:
+def _thread_worker(my_data: str, otel_ctx) -> None:
     """Worker which re-attaches the OpenTelemetry trace context.
 
     OpenTelemetry does not automatically pick up a parent thread's trace context in a
@@ -32,7 +32,7 @@ def _thread_worker(test_id: str, otel_ctx) -> None:
     """
     opentelemetry.context.attach(otel_ctx)
     sleep_s = random.random() * 4
-    with _trace.start_as_current_span(test_id, attributes={"sleep_s": sleep_s}):
+    with _trace.start_as_current_span(my_data, attributes={"sleep_s": sleep_s}):
         time.sleep(sleep_s)
         _trace.add_event("success")
 
@@ -42,8 +42,8 @@ def main():
     _log.info("Preparing to process in threads.")
     otel_ctx = opentelemetry.context.get_current()
     threads = []
-    for test_id in ("one", "two", "three", "four", "five", "six"):
-        thread = threading.Thread(target=_thread_worker, args=(test_id, otel_ctx))
+    for my_data in ("one", "two", "three", "four", "five", "six"):
+        thread = threading.Thread(target=_thread_worker, args=(my_data, otel_ctx))
         thread.start()
         threads.append(thread)
     for thread in threads:
