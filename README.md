@@ -65,7 +65,7 @@ dagster job execute --python-file examples/dagster_job.py
 
 ## License
 
-This library is provided under the MIT license, see [LICENSE.txt](LICENSE.txt).
+This library is provided under the MIT license, see [LICENSE](LICENSE).
 
 ## Release Notes
 
@@ -73,7 +73,7 @@ This library is provided under the MIT license, see [LICENSE.txt](LICENSE.txt).
 
 ## Development
 
-If you contribute, please ensure you and your employer accept [the license](LICENSE.txt) for any of your contributions.
+If you contribute, please ensure you and your employer accept [the license](LICENSE) for any of your contributions.
 
 ### Setup
 
