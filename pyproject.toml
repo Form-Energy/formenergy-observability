@@ -25,7 +25,7 @@ dependencies = [
     # Accept any version that's not a major version upgrade, but is at least
     # a known good recent version. This is slightly different from for example
     # ~=1.1.6 which would mean >=1.1.6,<1.2 and is too strict.
-    "dagster>=1.1.6,<2",
+    "dagster>=1.2.0,<2",
     "opentelemetry-api>=1.15.0,<2",
     "opentelemetry-sdk>=1.15.0,<2",
     "opentelemetry-exporter-otlp-proto-grpc>=1.15.0,<2",

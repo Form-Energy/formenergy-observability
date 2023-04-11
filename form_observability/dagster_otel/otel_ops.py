@@ -63,7 +63,7 @@ def publish_current_trace_context(context: dagster.OpExecutionContext) -> None:
     # If this is in a subgraph, use the subgraph name as the trace key. Otherwise,
     # it's not in a subgraph, use the root span name.
     # Dagster's internal convention is to use dotted namespaces for subgraphs.
-    op_path = context.solid_handle.path
+    op_path = context.op_handle.path
     trace_key = SpanName.ROOT if len(op_path) <= 1 else ".".join(op_path[:-1])
 
     context.log_event(
@@ -81,7 +81,7 @@ def _find_trace_context(context):
     # Try to find a trace context for this subgraph, but fall back to parent graphs
     # up to the root.
     trace_keys = []
-    remaining_path = context.solid_handle.path[:-1]
+    remaining_path = context.op_handle.path[:-1]
     while remaining_path:
         key = ".".join(remaining_path)
         remaining_path.pop()
@@ -101,7 +101,7 @@ def _find_trace_context(context):
                 )
                 event_asset_key = materialization.asset_key.path[0]
                 if event_asset_key == trace_key:
-                    return materialization.metadata_entries[0].entry_data.data
+                    return materialization.metadata["trace_context"].data
 
     raise RuntimeError(
         f"Could not find trace context, searched for any of {trace_keys} in"
