@@ -71,6 +71,7 @@ This library is provided under the MIT license, see [LICENSE](LICENSE).
 
 ## Release Notes
 
+*   0.2.0 Switch to `context.op_handle` and `materialization.metadata` as dict for Dagster 1.2.
 *   0.1.0 Initial external release, including `ContextAwareTracer`, `ctx`, and `@otel_op`.
 
 ## Development
