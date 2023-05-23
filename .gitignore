@@ -15,3 +15,6 @@ Thumbs.db
 
 # Package files
 **/dist/
+
+# private helpers
+publish.sh
