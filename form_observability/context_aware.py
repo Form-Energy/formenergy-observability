@@ -33,6 +33,7 @@ import threading
 from typing import Optional, Any, Dict
 
 import opentelemetry
+from opentelemetry.trace import Context, Link
 
 from form_observability.otel_value import (
     EventAttrKey,
@@ -242,3 +243,35 @@ class ContextAwareTracer:
             **kwargs,
         ) as span:
             yield span
+
+    @contextmanager
+    def start_new_linked_trace(
+        self,
+        name: str,
+        **kwargs,
+    ):
+        """Starts a new root span with start_as_current_span, linked to the current trace.
+
+        The new root span will have a link back to the previously active trace, but will
+        not appear as a child span. This helps avoid very large/complex traces.
+
+        This does not reset the _ObservabilityContext.
+
+        :return: The trace context of the new trace.
+        """
+        if "context" in kwargs:
+            raise ValueError("Cannot specify context when starting new trace.")
+        # Record the current context, to be added as a link.
+        orig_context = opentelemetry.trace.get_current_span().get_span_context()
+        # Include a link back to the old trace. Allow other links to be passed in too.
+        links = kwargs.get("links", [])
+        links.append(Link(orig_context))
+        kwargs["links"] = links
+        with self.start_as_current_span(
+            name,
+            # Start a fresh trace context.
+            context=Context(),
+            **kwargs,
+        ) as child_span:
+            child_context = child_span.get_span_context()
+            yield child_context
