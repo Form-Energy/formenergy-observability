@@ -21,14 +21,14 @@ from form_observability.dagster_otel.testing import noop_resource
 
 def test_publish_trace_context_logs_asset(mock_get_current_span):
     mock_context = MagicMock(spec=OpExecutionContext)
-    mock_context.solid_handle.path = ["main_graph", "subgraph", "my_op"]
+    mock_context.op_handle.path = ["main_graph", "subgraph", "my_op"]
 
     publish_current_trace_context(mock_context)
 
     mock_context.log_event.assert_called_once()
     first_call = mock_context.log_event.call_args_list[0]
     materialization = first_call[0][0]  # first arg from the call's args list
-    assert "traceparent" in materialization.metadata_entries[0].entry_data.data
+    assert "traceparent" in materialization.metadata["trace_context"].data
     assert materialization.asset_key.path[0] == "main_graph.subgraph"
 
 
