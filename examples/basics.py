@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Demonstrate a basic program that generates OpenTelemetry tracing."""
+import json
 import logging
 import os
 import random
@@ -47,7 +48,7 @@ def _helper_that_sometimes_catches_exceptions_internally(my_data: str) -> None:
 
 
 @_trace.traced  # Open a span for this function call. In this case it's the root span.
-def main():
+def basics_main():
     _log.info("Preparing to process tests.")
     num_errors = 0
     for my_data in ("one", "two", "three", "four", "five", "six"):
@@ -60,15 +61,15 @@ def main():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    header_env = "OTEL_EXPORTER_OTLP_HEADERS"
+    header_env = "OTEL_EXPORTER_OTLP_HEADERS_JSON"
     endpoint_env = "OTEL_EXPORTER_OTLP_ENDPOINT"
     if header_env not in os.environ:
         _log.error(f"To upload traces, you must set {header_env}, see README.md.")
     # Set up a simple span exporter with no sampling, suitable for data pipelines.
     configure(
         "form_observability_example",  # demo dataset name
-        otlp_headers=os.environ.get(header_env),
+        otlp_headers=json.loads(os.environ.get(header_env)),
         otlp_endpoint=os.environ.get(endpoint_env, "https://api.honeycomb.io"),
     )
     _log.addHandler(OtelSpanEventHandler())  # Add span events for log messages.
-    main()
+    basics_main()

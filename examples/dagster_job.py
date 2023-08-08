@@ -3,6 +3,7 @@
 Run with:
     dagster job execute --python-file examples/dagster_job.py
 """
+import json
 import os
 
 from dagster import (
@@ -31,7 +32,7 @@ _trace = ContextAwareTracer(__name__)
 @resource
 def configure_observability_resource(init_context):
     """This resource sets up the span exporter (before each op executes)."""
-    header_env = "OTEL_EXPORTER_OTLP_HEADERS"
+    header_env = "OTEL_EXPORTER_OTLP_HEADERS_JSON"
     endpoint_env = "OTEL_EXPORTER_OTLP_ENDPOINT"
     if header_env not in os.environ:
         init_context.log.error(
@@ -39,7 +40,7 @@ def configure_observability_resource(init_context):
         )
     configure(
         "form_observability_example",
-        otlp_headers=os.environ.get(header_env),
+        otlp_headers=json.loads(os.environ.get(header_env)),
         otlp_endpoint=os.environ.get(endpoint_env, "https://api.honeycomb.io"),
     )
 

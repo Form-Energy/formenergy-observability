@@ -59,7 +59,7 @@ def my_graph()
 Get an API key for uploading traces to your observability service (preferably in a development environment), set it in your environment, and run the examples. This should publish traces that you can then view.
 
 ```bash
-export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=<API key>"
+export OTEL_EXPORTER_OTLP_HEADERS_JSON="{'x-honeycomb-team': '<API key>'}"
 export OTEL_EXPORTER_OTLP_ENDPOINT="your observability service, defaults to Honeycomb"
 python examples/basics.py
 dagster job execute --python-file examples/dagster_job.py

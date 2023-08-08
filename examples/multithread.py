@@ -3,6 +3,7 @@
 
 This shows how to set up simple trace context propagation.
 """
+import json
 import logging
 import os
 import random
@@ -38,7 +39,7 @@ def _thread_worker(my_data: str, otel_ctx) -> None:
 
 
 @_trace.traced
-def main():
+def multithread_main():
     _log.info("Preparing to process in threads.")
     otel_ctx = opentelemetry.context.get_current()
     threads = []
@@ -53,14 +54,14 @@ def main():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    header_env = "OTEL_EXPORTER_OTLP_HEADERS"
+    header_env = "OTEL_EXPORTER_OTLP_HEADERS_JSON"
     endpoint_env = "OTEL_EXPORTER_OTLP_ENDPOINT"
     if header_env not in os.environ:
         _log.error(f"To upload traces, you must set {header_env}, see README.md.")
     configure(
         "form_observability_example",
-        otlp_headers=os.environ.get(header_env),
+        otlp_headers=json.loads(os.environ.get(header_env)),
         otlp_endpoint=os.environ.get(endpoint_env, "https://api.honeycomb.io"),
     )
     _log.addHandler(OtelSpanEventHandler())
-    main()
+    multithread_main()
