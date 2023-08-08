@@ -4,7 +4,7 @@
 #: *   Major: breaking API changes, significant feature additions.
 #: *   Minor: standard feature additions and improvements. No breaking changes.
 #: *   Micro: small bug fixes.
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 # Make commonly used symbols importable from form_observability.
 from .context_aware import ContextAwareTracer, ctx
