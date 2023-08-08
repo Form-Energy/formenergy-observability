@@ -8,6 +8,7 @@ pipeline_setup.configure(
 )
 """
 import os
+from typing import Dict, Optional
 
 import opentelemetry
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
@@ -21,7 +22,7 @@ from opentelemetry.sdk.trace import TracerProvider, SpanLimits
 
 def configure(
     service_name: str,
-    otlp_headers: str,
+    otlp_headers: Optional[Dict[str, str]],
     otlp_endpoint: str = "https://api.honeycomb.io",
     instrument_requests: bool = False,
 ) -> None:
