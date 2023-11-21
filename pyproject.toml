@@ -20,12 +20,12 @@ dependencies = [
     # Dagster and OTel. This specifies the versions to match Dagster 1.1.7, which
     # also satisfy OTel. (If pip picks OTel's version first, it's outside
     # Dagster's bounds.)
-    "grpcio>=1.32.0,<1.48.1",
+    "grpcio>=1.48.1",
     "packaging>=20.9,<22",
     # Accept any version that's not a major version upgrade, but is at least
     # a known good recent version. This is slightly different from for example
     # ~=1.1.6 which would mean >=1.1.6,<1.2 and is too strict.
-    "dagster>=1.2.0,<2",
+    "dagster>=1.5.0,<2",
     "opentelemetry-api>=1.15.0,<2",
     "opentelemetry-sdk>=1.15.0,<2",
     "opentelemetry-exporter-otlp-proto-grpc>=1.15.0,<2",
@@ -35,7 +35,7 @@ dependencies = [
 
 [project.optional-dependencies]
 test = [
-    "pytest~=6.1.2",
+    "pytest~=6.2.5",
     "pytest-html~=2.1.1",
     "pre-commit==2.15.0",
 ]
