@@ -9,5 +9,5 @@ __version__ = "0.3.2"
 # Make commonly used symbols importable from form_observability.
 from .context_aware import ContextAwareTracer, ctx
 from .log import OtelSpanEventHandler
-from .otel_value import EventAttrKey, EventAttrValue, SpanName
+from .otel_value import EventAttrKey, EventAttrValue, SpanAttrKey, SpanName
 from .pipeline_setup import configure
