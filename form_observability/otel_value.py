@@ -19,6 +19,19 @@ class SpanName:
     ROOT = "trace-root"
 
 
+class SpanAttrKey:
+    """Span attribute keys set by the Dagster integration."""
+
+    #: The Dagster run ID of the step that recorded the span.
+    DAGSTER_RUN_ID = "dagster.run_id"
+    #: The asset key (as a "/"-joined string) of a single-asset step.
+    DAGSTER_ASSET_KEY = "dagster.asset_key"
+    #: The selected asset keys of a multi-asset step.
+    DAGSTER_ASSET_KEYS = "dagster.asset_keys"
+    #: The partition key, for partitioned assets.
+    DAGSTER_PARTITION_KEY = "dagster.partition_key"
+
+
 class EventAttrKey:
     """Event attribute keys which may be referenced in external queries."""
 

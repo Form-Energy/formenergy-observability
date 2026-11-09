@@ -54,6 +54,25 @@ def my_graph()
     my_op(start=setup_done)
 ```
 
+Tracing for Dagster software-defined assets:
+
+```py
+from form_observability.dagster_otel import otel_asset, otel_multi_asset
+
+@otel_asset(key_prefix=["lab"])  # runs in a span named "lab/cycles"
+def cycles(context, raw_cycles):
+    _trace.add_event("my_event")
+    return clean(raw_cycles)
+```
+
+Asset runs don't need a root op: if no trace context was published in the run with
+`publish_current_trace_context`, `@otel_asset` / `@otel_multi_asset` derive one from
+the run's root run ID. All assets in a run (and in re-executions of it) then share one
+trace whose trace ID is the run ID, even with the multiprocess executor or runs
+started by schedules, sensors and auto-materialization. Spans record the
+`dagster.run_id`, `dagster.asset_key` (or `dagster.asset_keys`) and
+`dagster.partition_key` attributes.
+
 ### Running the Examples
 
 Get an API key for uploading traces to your observability service (preferably in a development environment), set it in your environment, and run the examples. This should publish traces that you can then view.

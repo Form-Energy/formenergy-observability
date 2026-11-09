@@ -121,6 +121,30 @@ def _set_trace_context(trace_context):
     opentelemetry.context.attach(ctx)
 
 
+def _set_span_maxrss(span) -> None:
+    """Records the maximum resident set size (peak RAM usage) of this process.
+
+    For a Python multiprocessing executor (or executor using a container per op) this
+    will indicate the op's max memory usage.
+    """
+    maxrss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    maxrss_b = (
+        maxrss
+        * {
+            # Linux documents maxrss units as kilobytes.
+            "linux": 1000,
+            # MacOS X doesn't document units but they seem to be bytes,
+            # for example a fresh Python session might report 10989568.
+            "darwin": 1,
+        }[platform.system().lower()]
+    )
+    span.set_attributes(
+        {
+            "process.resource.self.maxrss_b": maxrss_b,
+        }
+    )
+
+
 def otel_op(
     *decorator_args,
     span_name: Optional[str] = None,
@@ -186,25 +210,7 @@ def otel_op(
                         # their context.
                         raise
                 finally:
-                    # Record the maximum resident set size (peak RAM usage) of this
-                    # process. For a Python multiprocessing executor (or executor using
-                    # a container per op) this will indicate the op's max memory usage.
-                    maxrss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-                    maxrss_b = (
-                        maxrss
-                        * {
-                            # Linux documents maxrss units as kilobytes.
-                            "linux": 1000,
-                            # MacOS X doesn't document units but they seem to be bytes,
-                            # for example a fresh Python session might report 10989568.
-                            "darwin": 1,
-                        }[platform.system().lower()]
-                    )
-                    span.set_attributes(
-                        {
-                            "process.resource.self.maxrss_b": maxrss_b,
-                        }
-                    )
+                    _set_span_maxrss(span)
 
         return raw_op
 

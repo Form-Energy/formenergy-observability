@@ -4,5 +4,6 @@ from .otel_ops import (
     otel_op,
     publish_current_trace_context,
 )
+from .otel_assets import otel_asset, otel_multi_asset, run_trace_context
 from .timing import TimingInfo, get_timing_since_step_started
 from .util import get_run_id_and_ancestors
